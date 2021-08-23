@@ -26,17 +26,18 @@ runFile fn = do
       src <- readFile fn
       case runParser progP fn $ T.pack src of
            Left bundle -> pPrint (errorBundlePretty bundle)
-           Right ast -> case inferAST emptyTyenv ast of
-              Left l -> pPrint l
-              Right r' -> do res <- evalAST ast 
-                             case res of
-                                  Left s -> pPrint s
-                                  Right v -> pPrint v 
+           Right ast -> do
+              case inferAST emptyTyenv ast of
+                Left l -> pPrint l
+                Right r' -> do res <- evalAST ast 
+                               case res of
+                                    Left s -> pPrint s
+                                    Right v -> pPrint $ fst v 
 
 
 main :: IO ()
 main = do 
-          runTests
+          --runTests
           args <- getArgs
           case args of
             [fname] -> runFile fname
@@ -86,6 +87,7 @@ runTests
        inferFor "[\\a b -> let [x|x] = a [y|y] = b in 5+x|lamda] 5 6" 
        inferFor "[\\a b -> let [x|x] = a [y|y] = b in 5+6|lamda] 5 6" 
        inferFor "1" 
+       inferFor "[\\a b -> [\\v w -> let [x| the result] = v + w [y| some other val] = 7 in x + y | lamda] a b|lamdaouter]" 
 
 {-
        f <- T.readFile "meep.fcc"

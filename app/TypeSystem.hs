@@ -140,7 +140,7 @@ inferParamList env ps ex  = do
       ext lenv (p,tv) = return $ lenv `extend` ( p , Forall [] tv)
   env' <- foldM ext env psts
   (s1,t1) <- infer env' ex
-  return (s1, foldr (TArr . apply s1) t1 tvs)
+  return (s1, foldr (TArr) t1 $ map (apply s1) tvs)
 
 
 infer :: TypeEnv -> Expr -> Infer (Subst, Type)
@@ -176,6 +176,7 @@ infer env ex = case ex of
     psts <- mapM (infer (apply s1 env)) e2
     let (s2,t2) = foldr (\(a,b)(c,d) -> (compose c a, TArr b d)) (s1,tv) psts
     s3       <- unify (apply s2 t1) t2 
+    --s3       <- unify (apply s2 t1) t2 
     return (s3 `compose` s2 `compose` s1, apply s3 tv)
 
 

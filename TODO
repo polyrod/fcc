@@ -6,10 +6,8 @@
   - Cmt for all 
 
 *** typcheck
+  - nested lamdas dont infer right 
 
 *** eval
-  - evalT
-  - evalC
-  - evalM(ingle)
 
 *** repl
